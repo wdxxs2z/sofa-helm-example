@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rpcserver-config 
+data:
+  application.yaml: |
+    spring:
+      application:
+        name: {{ template "sofa.fullname" . }}-rpcserver
+    com:
+      alipay:
+        sofa:
+          rpc:
+            registry-address: zookeeper://{{ template "sofa.fullname" . }}-zk:{{ .Values.zk.port }}
+          tracer:
+            zipkin:
+              baseUrl: http://{{ template "sofa.fullname" . }}-zipkin:{{ .Values.zipkin.port }}
+              enabled: true
+    logging:
+      path: /tmp/

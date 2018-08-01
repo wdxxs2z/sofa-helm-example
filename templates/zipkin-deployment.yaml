@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "sofa.fullname" . }}-zipkin
+  labels:
+    app: {{ template "sofa.fullname" . }}-zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "sofa.fullname" . }}-zipkin
+  template:
+    metadata:
+      labels:
+        app: {{ template "sofa.fullname" . }}-zipkin
+    spec:  
+      containers:
+        - name: {{ template "sofa.fullname" . }}-zipkin
+          image: {{ .Values.zipkin.image.repository }}:{{ .Values.zipkin.image.tag }}
+          imagePullPolicy: {{ .Values.zipkin.image.policy }}
+          ports:
+            - containerPort: {{ .Values.zipkin.port }}

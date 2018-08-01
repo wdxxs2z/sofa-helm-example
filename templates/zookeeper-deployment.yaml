@@ -1,0 +1,25 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "sofa.fullname" . }}-zk
+  labels:
+    app: {{ template "sofa.fullname" . }}-zk
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "sofa.fullname" . }}-zk
+  template:
+    metadata:
+      labels:
+        app: {{ template "sofa.fullname" . }}-zk
+    spec:  
+      containers:
+      - name: {{ template "sofa.fullname" . }}-zk
+        image: {{ .Values.zk.image.repository }}:{{ .Values.zk.image.tag }}
+        imagePullPolicy: {{ .Values.zk.image.policy }}
+        ports:
+        - containerPort: {{ .Values.zk.port }}

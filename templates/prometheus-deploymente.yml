@@ -1,0 +1,29 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "sofa.fullname" . }}-prometheus
+  labels:
+    app: {{ template "sofa.fullname" . }}-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "sofa.fullname" . }}-prometheus
+  template:
+    metadata:
+      labels:
+        app: {{ template "sofa.fullname" . }}-prometheus
+    spec:  
+      containers:
+      - name: {{ template "sofa.fullname" . }}-prometheus
+        image: {{ .Values.prometheus.image.repository }}:{{ .Values.prometheus.image.tag }}
+        imagePullPolicy: {{ .Values.prometheus.image.policy }}
+        ports:
+        - containerPort: {{ .Values.prometheus.port }}
+        volumeMounts:
+        - name: prometheus-config
+          mountPath: /etc/prometheus/
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config

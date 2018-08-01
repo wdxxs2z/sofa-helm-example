@@ -1,0 +1,25 @@
+{{- if .Values.ingress.enabled }}
+{{- $serviceName := include "sofa.fullname" . -}}
+{{- $servicePort := .Values.prometheus.port -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+{{- if .Values.ingress.annotations }}
+  annotations:
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+{{- end }}
+  name: {{ template "sofa.fullname" . }}-prometheus
+  labels:
+    app: {{ template "sofa.fullname" . }}-prometheus
+spec:
+  rules:
+    {{- range $host := .Values.ingress.prometheus_hosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $serviceName }}-prometheus
+              servicePort: {{ $servicePort }}
+    {{- end -}}
+{{- end }}

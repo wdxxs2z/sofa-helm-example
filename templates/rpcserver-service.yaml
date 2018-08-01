@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sofa.fullname" . }}-rpcserver
+spec:
+  selector:
+    app: {{ template "sofa.fullname" . }}-rpcserver
+  ports:
+  - protocol: TCP
+    port: {{ .Values.rpcserver.rest_port }}
+    targetPort: {{ .Values.rpcserver.rest_port }}
+    name: web
+  - protocol: TCP
+    port: {{ .Values.rpcserver.prometheus_port }}
+    targetPort: {{ .Values.rpcserver.prometheus_port }}
+    name: prometheus

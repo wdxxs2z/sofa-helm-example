@@ -1,0 +1,34 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "sofa.fullname" . }}-rpcclient
+  labels:
+    app: {{ template "sofa.fullname" . }}-rpcclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "sofa.fullname" . }}-rpcclient
+  template:
+    metadata:
+      labels:
+        app: {{ template "sofa.fullname" . }}-rpcclient
+    spec:  
+      containers:
+      - name: {{ template "sofa.fullname" . }}
+        image: {{ .Values.rpcclient.image.repository }}:{{ .Values.rpcclient.image.tag }}
+        imagePullPolicy: {{ .Values.rpcclient.image.policy }}
+        volumeMounts:
+        - name: rpcclient-config
+          mountPath: /config
+        ports:
+        - containerPort: {{ .Values.rpcclient.rest_port }}
+        - containerPort: {{ .Values.rpcclient.prometheus_port }}
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: {{ .Values.rpcclient.rest_port }}
+      volumes:
+      - name: rpcclient-config
+        configMap:
+          name: rpcclient-config 

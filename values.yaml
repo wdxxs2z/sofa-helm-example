@@ -1,0 +1,42 @@
+zk:
+  image:
+    repository: zookeeper
+    tag: 3.4.12
+    policy: IfNotPresent
+  port: 2181
+zipkin:
+  image:
+    repository: openzipkin/zipkin
+    tag: 2.10.4
+    policy: IfNotPresent
+  port: 9411
+prometheus:
+  image: 
+    repository: prom/prometheus
+    tag: v2.3.2
+    policy: IfNotPresent
+  port: 9090
+rpcserver:
+  image:
+    repository: wdxxsez/sofa-rpcserver 
+    tag: 0.1
+    policy: IfNotPresent
+  healthcheck_port: 8080
+  rest_port: 8080
+  prometheus_port: 9494
+rpcclient:
+  image:
+    repository: wdxxsez/sofa-rpcclient
+    tag: 0.1
+    policy: IfNotPresent
+  healthcheck_port: 8080
+  rest_port: 8080
+  prometheus_port: 9494
+ingress:
+  enabled: true
+  prometheus_hosts:
+  - sofa-prometheus.k8s.io
+  zipkin_hosts:
+  - sofa-zipkin.k8s.io
+  rpcclient_hosts:
+  - sofa-client.k8s.io

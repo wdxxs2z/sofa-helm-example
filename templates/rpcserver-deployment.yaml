@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "sofa.fullname" . }}-rpcserver
+  labels:
+    app: {{ template "sofa.fullname" . }}-rpcserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "sofa.fullname" . }}-rpcserver
+  template:
+    metadata:
+      labels:
+        app: {{ template "sofa.fullname" . }}-rpcserver
+    spec:  
+      containers:
+      - name: {{ template "sofa.fullname" . }}-rpcserver
+        image: {{ .Values.rpcserver.image.repository }}:{{ .Values.rpcserver.image.tag }}
+        imagePullPolicy: {{ .Values.rpcserver.image.policy }}
+        env:
+        - name: JAVA_OPTS
+          value: "-Dspring.config.location=/deployments/application.yaml"
+        volumeMounts:
+        - name: rpcserver-config
+          mountPath: /config
+        ports:
+        - containerPort: {{ .Values.rpcserver.rest_port }}
+        - containerPort: {{ .Values.rpcserver.prometheus_port }}
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: {{ .Values.rpcserver.healthcheck_port }}
+      volumes:
+      - name: rpcserver-config
+        configMap:
+          name: rpcserver-config 
